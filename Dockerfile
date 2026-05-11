@@ -17,7 +17,7 @@ COPY . .
 
 # CORRECCIÓN: Usando el nuevo formato con el signo de igual (=)
 ENV NEXT_TELEMETRY_DISABLED=1
-
+ENV API_URL=http://go-app:8000
 RUN npm run build
 
 # Etapa 4: Producción (Imagen final)
