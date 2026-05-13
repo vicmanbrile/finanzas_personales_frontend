@@ -26,5 +26,6 @@ export interface Tarjeta {
   apalancamiento: number;
   msi?: number;
   usoPorcentaje: number;
+  uso: number;
   tener: number;
 }

@@ -1,16 +1,23 @@
 "use client";
 
-import { FormEvent } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { Tarjeta } from "@/types";
 
 interface TarjetaModalProps {
   isOpen: boolean;
   onClose: () => void;
   tarjetaActual: Tarjeta | null;
-  onSuccess: () => void; // Para recargar los datos
+  onSuccess: () => void;
 }
 
 export function TarjetaModal({ isOpen, onClose, tarjetaActual, onSuccess }: TarjetaModalProps) {
+  const [colorHex, setColorHex] = useState(tarjetaActual?.color || "#6366f1");
+  useEffect(() => {
+    if (isOpen) {
+      setColorHex(tarjetaActual?.color || "#6366f1");
+    }
+  }, [tarjetaActual, isOpen]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -33,6 +40,30 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual, onSuccess }: Tarj
     } catch (error) {
       console.error(error);
       alert("Error de conexión con el servidor");
+    }
+  };
+
+  const handleEliminar = async () => {
+    const idStr = tarjetaActual?.id || tarjetaActual?._id;
+    if (!idStr) return;
+
+    if (confirm("¿Estás seguro de que deseas eliminar esta tarjeta?")) {
+      try {
+        const response = await fetch(`/api/tarjetas?id=${idStr}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          onClose();
+          onSuccess();
+        } else {
+          const text = await response.text();
+          alert("Error al eliminar: " + text);
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Error de conexión con el servidor");
+      }
     }
   };
 
@@ -87,13 +118,47 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual, onSuccess }: Tarj
           
           <div className="form-group">
             <label>Color Representativo:</label>
-            <input type="color" name="color" defaultValue={tarjetaActual?.color || "#6366f1"} disabled={!!tarjetaActual} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <input 
+                type="color" 
+                value={colorHex} 
+                onChange={(e) => setColorHex(e.target.value)}
+                style={{ 
+                  width: '60px', 
+                  height: '40px', 
+                  padding: '0', 
+                  border: 'none', 
+                  borderRadius: '4px',
+                  cursor: 'pointer' 
+                }} 
+              />
+              <input 
+                type="text" 
+                name="color" 
+                value={colorHex} 
+                onChange={(e) => setColorHex(e.target.value)}
+                placeholder="#6366f1"
+                pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+                title="Ingresa un color hexadecimal válido (ejemplo: #FF0000)"
+                style={{ flex: 1, textTransform: 'uppercase', height: '40px' }}
+                required 
+              />
+            </div>
           </div>
           
-          <div className="form-group">
-            <button type="submit" className="btn-guardar" style={{ flex: 2 }}>Guardar Tarjeta</button>
+          <div className="form-group" style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+            <button type="submit" className="btn-guardar" style={{ flex: 2 }}>
+              Guardar Tarjeta
+            </button>
             {tarjetaActual && (
-              <button type="button" className="btn-eliminar">Eliminar</button>
+              <button 
+                type="button" 
+                className="btn-eliminar" 
+                onClick={handleEliminar}
+                style={{ flex: 1, backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+              >
+                Eliminar
+              </button>
             )}
           </div>
         </form>
