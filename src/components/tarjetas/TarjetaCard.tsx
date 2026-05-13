@@ -20,7 +20,7 @@ export function TarjetaCard({ tarjeta: t, onEdit }: TarjetaCardProps) {
         <div className="tarjeta-header">
           <h3>{t.nombre}</h3>
           <span className="tarjeta-uso-badge" style={{ backgroundColor: `${t.color}20`, color: t.color }}>
-            {t.usoPorcentaje}% uso
+            {t.uso} | {t.usoPorcentaje}% uso
           </span>
         </div>
         <div className="tarjeta-credito">

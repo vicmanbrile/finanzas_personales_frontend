@@ -52,13 +52,13 @@ export default function Dashboard() {
           <section className="cards-column">
             <h3>Mis Tarjetas</h3>
             <div id="tarjetas-container">
-              {tarjetas.map((t) => (
+              {tarjetas?.length > 0  ? tarjetas.map((t) => (
                 <TarjetaCard 
                   key={t.id || t._id} 
                   tarjeta={t} 
                   onEdit={handleAbrirModal} 
                 />
-              ))}
+              )) : <p>No hay tarjetas</p>}
             </div>
 
             <button className="tarjeta-agregar-estatica" onClick={() => handleAbrirModal()}>
