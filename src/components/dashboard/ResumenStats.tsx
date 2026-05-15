@@ -1,13 +1,16 @@
 "use client";
 
+import useSWR from "swr";
+import { fetcher } from "@/lib/fetcher";
 import { formatCurrency } from "@/lib/utils";
 import { Totals } from "@/types";
 
-interface ResumenStatsProps {
-  totals: Totals | null;
-}
+export function ResumenStats() {
+  const { data: totals, error, isLoading } = useSWR<Totals>('/api/dashboard/totals', fetcher);
 
-export function ResumenStats({ totals }: ResumenStatsProps) {
+  if (isLoading) return <div>Cargando resumen...</div>;
+  if (error) return <div>Error al cargar totales</div>;
+
   return (
     <section className="stats-area">
       <div className="resumen-card">

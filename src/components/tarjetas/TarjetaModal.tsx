@@ -2,15 +2,15 @@
 
 import { FormEvent, useState, useEffect } from "react";
 import { Tarjeta } from "@/types";
+import { mutate } from "swr";
 
 interface TarjetaModalProps {
   isOpen: boolean;
   onClose: () => void;
   tarjetaActual: Tarjeta | null;
-  onSuccess: () => void;
 }
 
-export function TarjetaModal({ isOpen, onClose, tarjetaActual, onSuccess }: TarjetaModalProps) {
+export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalProps) {
   const [colorHex, setColorHex] = useState(tarjetaActual?.color || "#6366f1");
   useEffect(() => {
     if (isOpen) {
@@ -31,8 +31,9 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual, onSuccess }: Tarj
       });
 
       if (response.ok) {
+        mutate('/api/tarjetas');
+        mutate('/api/dashboard/totals');
         onClose();
-        onSuccess(); 
       } else {
         const text = await response.text();
         alert("Error al guardar: " + text);
@@ -54,8 +55,9 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual, onSuccess }: Tarj
         });
 
         if (response.ok) {
+          mutate('/api/tarjetas');
+          mutate('/api/dashboard/totals');
           onClose();
-          onSuccess();
         } else {
           const text = await response.text();
           alert("Error al eliminar: " + text);
