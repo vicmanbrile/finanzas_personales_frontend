@@ -24,10 +24,29 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    const payload = {
+      nombre: formData.get("nombre") as string,
+      credito: Number(formData.get("credito")),
+      disponible: Number(formData.get("disponible")),
+      saldo: Number(formData.get("saldo")),
+      saldoAPago: Number(formData.get("saldoAPago")),
+      fechaPago: formData.get("fechaPago") as string,
+      color: formData.get("color") as string,
+    };
+
+    const isUpdate = !!tarjetaActual;
+    const idStr = tarjetaActual?.id || tarjetaActual?._id;
+    
+    const url = isUpdate ? `/api/tarjetas?id=${idStr}` : `/api/tarjetas`;
+    const method = isUpdate ? "PUT" : "POST";
+
     try {
-      const response = await fetch(`/api/tarjetas`, {
-        method: "POST",
-        body: formData,
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -85,9 +104,6 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
         <h2>{tarjetaActual ? "Actualizar Tarjeta" : "Agregar Tarjeta"}</h2>
         
         <form onSubmit={handleSubmit}>
-          <input type="hidden" name="action" value={tarjetaActual ? "update" : "create"} />
-          <input type="hidden" name="id" value={tarjetaActual?.id || tarjetaActual?._id || ""} />
-
           <div className="form-group">
             <label>Nombre de la Tarjeta:</label>
             <input type="text" name="nombre" defaultValue={tarjetaActual?.nombre || ""} readOnly={!!tarjetaActual} required />
