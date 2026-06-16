@@ -24,7 +24,9 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    
+    const diaPagoNum = Number(formData.get("diaPago"));
+    const hoy = new Date();
+    const fechaPagoCalculada = new Date(hoy.getFullYear(), hoy.getMonth(), diaPagoNum);
     const payload = {
       nombre: formData.get("nombre") as string,
       credito: Number(formData.get("credito")),
@@ -32,7 +34,8 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
       saldo: Number(formData.get("saldo")),
       saldoAPago: Number(formData.get("saldoAPago")),
       diaCorte: Number(formData.get("diaCorte")),
-      diaPago: Number(formData.get("diaPago")),
+      diaPago: diaPagoNum,
+      fechaPago: fechaPagoCalculada.toISOString(), 
       color: formData.get("color") as string,
     };
 
@@ -90,7 +93,6 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
     }
   };
 
-  // Estilo base para todos los inputs
   const inputStyle = {
     width: "100%",
     padding: "10px 12px",
@@ -101,7 +103,6 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
     fontSize: "15px"
   };
 
-  // Estilo reutilizable para las filas dobles (Flexbox)
   const rowStyle = {
     display: "flex",
     gap: "20px",
@@ -115,9 +116,8 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
         <h2>{tarjetaActual ? "Actualizar Tarjeta" : "Agregar Tarjeta"}</h2>
         
         <form onSubmit={handleSubmit}>
-          {/* Fila 1: Nombre y Color lado a lado */}
           <div style={rowStyle}>
-            <div className="form-group" style={{ flex: 2 }}> {/* El nombre toma más espacio */}
+            <div className="form-group" style={{ flex: 2 }}>
               <label>Nombre de la Tarjeta:</label>
               <input type="text" name="nombre" defaultValue={tarjetaActual?.nombre || ""} readOnly={!!tarjetaActual} required style={inputStyle} />
             </div>
@@ -151,8 +151,6 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
               </div>
             </div>
           </div>
-          
-          {/* Fila 2: Crédito Total y Disponible lado a lado */}
           <div style={rowStyle}>
             <div className="form-group" style={{ flex: 1 }}>
               <label>Crédito Total:</label>
@@ -163,8 +161,6 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
               <input type="number" step="0.01" name="disponible" defaultValue={tarjetaActual?.disponible ?? ""} required style={inputStyle} />
             </div>
           </div>
-          
-          {/* Fila 3: Saldo Actual y Saldo a Pagar lado a lado */}
           <div style={rowStyle}>
             <div className="form-group" style={{ flex: 1 }}>
               <label>Saldo Actual:</label>
@@ -175,8 +171,6 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
               <input type="number" step="0.01" name="saldoAPago" defaultValue={tarjetaActual?.saldoAPago ?? ""} required style={inputStyle} />
             </div>
           </div>
-          
-          {/* Fila 4: Día de Corte y Día de Pago lado a lado */}
           <div style={rowStyle}>
             <div className="form-group" style={{ flex: 1 }}>
               <label>Día de Corte:</label>
@@ -187,8 +181,6 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
               <input type="number" min="1" max="31" name="diaPago" defaultValue={tarjetaActual?.diaPago ?? ""} required style={inputStyle} />
             </div>
           </div>
-          
-          {/* Fila 5: Botones de Acción */}
           <div className="form-group" style={{ display: 'flex', gap: '12px', marginTop: '25px' }}>
             <button type="submit" className="btn-guardar" style={{ flex: 2, padding: "12px", borderRadius: "8px", cursor: 'pointer' }}>
               Guardar Tarjeta
