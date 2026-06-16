@@ -12,6 +12,7 @@ interface TarjetaModalProps {
 
 export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalProps) {
   const [colorHex, setColorHex] = useState(tarjetaActual?.color || "#6366f1");
+
   useEffect(() => {
     if (isOpen) {
       setColorHex(tarjetaActual?.color || "#6366f1");
@@ -30,7 +31,8 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
       disponible: Number(formData.get("disponible")),
       saldo: Number(formData.get("saldo")),
       saldoAPago: Number(formData.get("saldoAPago")),
-      fechaPago: formData.get("fechaPago") as string,
+      diaCorte: Number(formData.get("diaCorte")),
+      diaPago: Number(formData.get("diaPago")),
       color: formData.get("color") as string,
     };
 
@@ -88,84 +90,107 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
     }
   };
 
-  const formatearFechaParaInput = (fecha?: string) => {
-    if (!fecha) return "";
-    if (fecha.includes("/")) {
-      const partes = fecha.split("/");
-      return `${partes[2]}-${partes[1]}-${partes[0]}`;
-    }
-    return fecha;
+  // Estilo base para todos los inputs
+  const inputStyle = {
+    width: "100%",
+    padding: "10px 12px",
+    borderRadius: "8px",
+    border: "1px solid #d1d5db",
+    boxSizing: "border-box" as const,
+    marginTop: "6px",
+    fontSize: "15px"
+  };
+
+  // Estilo reutilizable para las filas dobles (Flexbox)
+  const rowStyle = {
+    display: "flex",
+    gap: "20px",
+    marginBottom: "15px"
   };
 
   return (
     <div className="modal-activo">
-      <div className="modal-contenido">
+      <div className="modal-contenido" style={{ borderRadius: "12px", padding: "25px", maxWidth: "550px", width: "100%" }}>
         <span className="cerrar-modal" onClick={onClose}>&times;</span>
         <h2>{tarjetaActual ? "Actualizar Tarjeta" : "Agregar Tarjeta"}</h2>
         
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Nombre de la Tarjeta:</label>
-            <input type="text" name="nombre" defaultValue={tarjetaActual?.nombre || ""} readOnly={!!tarjetaActual} required />
-          </div>
-          
-          <div className="form-group">
-            <label>Crédito Total:</label>
-            <input type="number" step="0.01" name="credito" defaultValue={tarjetaActual?.credito || ""} required />
-          </div>
-          
-          <div className="form-group">
-            <label>Crédito Disponible:</label>
-            <input type="number" step="0.01" name="disponible" defaultValue={tarjetaActual?.disponible || ""} required />
-          </div>
-          
-          <div className="form-group">
-            <label>Saldo Actual:</label>
-            <input type="number" step="0.01" name="saldo" defaultValue={tarjetaActual?.saldo || ""} required />
-          </div>
-          
-          <div className="form-group">
-            <label>Saldo a Pagar:</label>
-            <input type="number" step="0.01" name="saldoAPago" defaultValue={tarjetaActual?.saldoAPago || ""} required />
-          </div>
-          
-          <div className="form-group">
-            <label>Fecha de Límite de Pago:</label>
-            <input type="date" name="fechaPago" defaultValue={formatearFechaParaInput(tarjetaActual?.fechaAPago || tarjetaActual?.fechaPago)} required />
-          </div>
-          
-          <div className="form-group">
-            <label>Color Representativo:</label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <input 
-                type="color" 
-                value={colorHex} 
-                onChange={(e) => setColorHex(e.target.value)}
-                style={{ 
-                  width: '60px', 
-                  height: '40px', 
-                  padding: '0', 
-                  border: 'none', 
-                  borderRadius: '4px',
-                  cursor: 'pointer' 
-                }} 
-              />
-              <input 
-                type="text" 
-                name="color" 
-                value={colorHex} 
-                onChange={(e) => setColorHex(e.target.value)}
-                placeholder="#6366f1"
-                pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
-                title="Ingresa un color hexadecimal válido (ejemplo: #FF0000)"
-                style={{ flex: 1, textTransform: 'uppercase', height: '40px' }}
-                required 
-              />
+          {/* Fila 1: Nombre y Color lado a lado */}
+          <div style={rowStyle}>
+            <div className="form-group" style={{ flex: 2 }}> {/* El nombre toma más espacio */}
+              <label>Nombre de la Tarjeta:</label>
+              <input type="text" name="nombre" defaultValue={tarjetaActual?.nombre || ""} readOnly={!!tarjetaActual} required style={inputStyle} />
+            </div>
+            <div className="form-group" style={{ flex: 1.5 }}>
+              <label>Color Representativo:</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '6px' }}>
+                <input 
+                  type="color" 
+                  value={colorHex} 
+                  onChange={(e) => setColorHex(e.target.value)}
+                  style={{ 
+                    width: '60px', 
+                    height: '42px', 
+                    padding: '0', 
+                    border: '1px solid #d1d5db', 
+                    borderRadius: '8px',
+                    cursor: 'pointer' 
+                  }} 
+                />
+                <input 
+                  type="text" 
+                  name="color" 
+                  value={colorHex} 
+                  onChange={(e) => setColorHex(e.target.value)}
+                  placeholder="#6366f1"
+                  pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+                  title="Ingresa un color hexadecimal válido (ejemplo: #FF0000)"
+                  style={{ ...inputStyle, flex: 1, textTransform: 'uppercase', height: '42px', marginTop: 0 }}
+                  required 
+                />
+              </div>
             </div>
           </div>
           
-          <div className="form-group" style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-            <button type="submit" className="btn-guardar" style={{ flex: 2 }}>
+          {/* Fila 2: Crédito Total y Disponible lado a lado */}
+          <div style={rowStyle}>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>Crédito Total:</label>
+              <input type="number" step="0.01" name="credito" defaultValue={tarjetaActual?.credito ?? ""} required style={inputStyle} />
+            </div>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>Crédito Disponible:</label>
+              <input type="number" step="0.01" name="disponible" defaultValue={tarjetaActual?.disponible ?? ""} required style={inputStyle} />
+            </div>
+          </div>
+          
+          {/* Fila 3: Saldo Actual y Saldo a Pagar lado a lado */}
+          <div style={rowStyle}>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>Saldo Actual:</label>
+              <input type="number" step="0.01" name="saldo" defaultValue={tarjetaActual?.saldo ?? ""} required style={inputStyle} />
+            </div>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>Saldo a Pagar:</label>
+              <input type="number" step="0.01" name="saldoAPago" defaultValue={tarjetaActual?.saldoAPago ?? ""} required style={inputStyle} />
+            </div>
+          </div>
+          
+          {/* Fila 4: Día de Corte y Día de Pago lado a lado */}
+          <div style={rowStyle}>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>Día de Corte:</label>
+              <input type="number" min="1" max="31" name="diaCorte" defaultValue={tarjetaActual?.diaCorte ?? ""} required style={inputStyle} />
+            </div>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>Día de Pago:</label>
+              <input type="number" min="1" max="31" name="diaPago" defaultValue={tarjetaActual?.diaPago ?? ""} required style={inputStyle} />
+            </div>
+          </div>
+          
+          {/* Fila 5: Botones de Acción */}
+          <div className="form-group" style={{ display: 'flex', gap: '12px', marginTop: '25px' }}>
+            <button type="submit" className="btn-guardar" style={{ flex: 2, padding: "12px", borderRadius: "8px", cursor: 'pointer' }}>
               Guardar Tarjeta
             </button>
             {tarjetaActual && (
@@ -173,7 +198,7 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
                 type="button" 
                 className="btn-eliminar" 
                 onClick={handleEliminar}
-                style={{ flex: 1, backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+                style={{ flex: 1, backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', padding: "12px" }}
               >
                 Eliminar
               </button>

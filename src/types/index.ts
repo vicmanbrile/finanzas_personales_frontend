@@ -9,23 +9,35 @@ export interface Totals {
 }
 
 export interface Tarjeta {
+  // Datos guardados (Base)
   id?: string;
-  _id?: string;
+  _id?: string; 
   nombre: string;
   color: string;
   credito: number;
   disponible: number;
   saldo: number;
   saldoAPago: number;
-  fechaPago?: string;
-  fechaAPago?: string;
-  tenerCorriente?: number;
-  tenerAPago?: number;
+  diaCorte: number;
+  diaPago: number;
+
+  // Estado del crédito (Cálculos de fechas/tiempo)
   semanaCorriente?: number;
   semanaAPago?: number;
+  diasParaProximoCorte?: number; 
+  diasParaProximoPago?: number; 
+  tienePagoPendiente?: boolean; 
+  fechaPago?: string; 
+  fechaAPago?: string;
+
+  // División del crédito completo
+  uso: number;
+  usoPorcentaje: number;
+  tener: number;
   apalancamiento: number;
   msi?: number;
-  usoPorcentaje: number;
-  uso: number;
-  tener: number;
+
+  // Cálculos de cuánto tener
+  tenerAPago?: number;
+  tenerCorriente?: number;
 }
