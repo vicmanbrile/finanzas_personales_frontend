@@ -24,9 +24,7 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const diaPagoNum = Number(formData.get("diaPago"));
-    const hoy = new Date();
-    const fechaPagoCalculada = new Date(hoy.getFullYear(), hoy.getMonth(), diaPagoNum);
+    
     const payload = {
       nombre: formData.get("nombre") as string,
       credito: Number(formData.get("credito")),
@@ -34,8 +32,7 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
       saldo: Number(formData.get("saldo")),
       saldoAPago: Number(formData.get("saldoAPago")),
       diaCorte: Number(formData.get("diaCorte")),
-      diaPago: diaPagoNum,
-      fechaPago: fechaPagoCalculada.toISOString(), 
+      diaPago: Number(formData.get("diaPago")),
       color: formData.get("color") as string,
     };
 
@@ -114,7 +111,6 @@ export function TarjetaModal({ isOpen, onClose, tarjetaActual }: TarjetaModalPro
       <div className="modal-contenido" style={{ borderRadius: "12px", padding: "25px", maxWidth: "550px", width: "100%" }}>
         <span className="cerrar-modal" onClick={onClose}>&times;</span>
         <h2>{tarjetaActual ? "Actualizar Tarjeta" : "Agregar Tarjeta"}</h2>
-        
         <form onSubmit={handleSubmit}>
           <div style={rowStyle}>
             <div className="form-group" style={{ flex: 2 }}>
