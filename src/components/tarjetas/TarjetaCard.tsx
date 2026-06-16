@@ -15,9 +15,11 @@ export function TarjetaCard({ tarjeta: t, onEdit }: TarjetaCardProps) {
   const totalAhorroEnSemana = tenerCorriente + tenerAPago;
 
   const obtenerFechaPagoActual = () => {
-    const diaNum = t.diaPago || (t.fechaPago ? new Date(t.fechaPago).getDate() : (t.fechaAPago ? new Date(t.fechaAPago).getDate() : 1));
+    const diaNum = t.diaPago || 1;
     const hoy = new Date();
-    const fechaActualizada = new Date(hoy.getFullYear(), hoy.getMonth(), diaNum);
+        const offsetMes = t.tienePagoPendiente ? 0 : 1;
+    
+    const fechaActualizada = new Date(hoy.getFullYear(), hoy.getMonth() + offsetMes, diaNum);
 
     return fechaActualizada.toLocaleDateString("es-MX", {
       day: "2-digit",
