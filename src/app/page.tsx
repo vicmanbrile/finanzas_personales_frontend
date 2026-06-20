@@ -8,7 +8,7 @@ import { TarjetaModal } from "@/components/tarjetas/TarjetaModal";
 import { Tarjeta } from "@/types";
 
 export default function Dashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tarjetaActual, setTarjetaActual] = useState<Tarjeta | null>(null);
 
