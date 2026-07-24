@@ -1,10 +1,11 @@
 services:
   go-app:
     image: ghcr.io/vicmanbrile/go-backend:latest
-    ports:
-      - "8000:8000"
+    container_name: go_backend
     environment:
       - MONGO_URI=mongodb://mongodb:27017/finanzas
+    ports:
+      - "8000:8000" 
     depends_on:
       - mongodb
     networks:
@@ -12,8 +13,9 @@ services:
 
   mongodb:
     image: mongo:4.4.18
+    container_name: mongodb_dev
     ports:
-      - "27017:27017"
+      - "27017:27017" 
     volumes:
       - mongo-dev-data:/data/db
     networks:
